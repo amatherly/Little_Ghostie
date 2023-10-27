@@ -8,6 +8,12 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool HasKey
+    {
+        get => hasKey;
+        set => hasKey = value;
+    }
+
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float amplitude = 0.2f; // The distance the object should float up and down
     [SerializeField] private List<Sprite> sprites;
@@ -22,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [CanBeNull] private AudioSource moveSound;
     private float verticalDelta = 0f;
     private int health = 7;
+    public bool hasKey = true;
 
     private void Awake()
     {
