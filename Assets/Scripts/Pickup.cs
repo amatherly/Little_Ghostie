@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-    public Item item;
     public float speed = 2f;
     public float pickupRange = 1f;
     public AudioClip pickupSound;
+    public PlayerController player;
 
     private Transform playerTransform;
     public AudioSource audioSource;
@@ -20,7 +20,6 @@ public class Pickup : MonoBehaviour
     }
 
 
-
     private void Update()
     {
         // Check if the player is in range
@@ -33,22 +32,13 @@ public class Pickup : MonoBehaviour
     }
 
 
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-
         if (other.CompareTag("Player"))
         {
             AudioSource.PlayClipAtPoint(pickupSound, this.gameObject.transform.position);
-
-            // if (inventoryManager.AddItem(item))
-            // {
-            //     Debug.Log("item added to inventory");
-            //     Debug.Log("item destroyed");
-            //     // Destroy the item
-            //     Destroy(gameObject);
-            // }
+            player.hasKey = true;
+            Destroy(gameObject);
         }
     }
 }
-
