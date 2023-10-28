@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.VisualScripting;
+
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 [CreateAssetMenu(fileName = "Item", menuName = "Inventory/Item")]
 public class Item : ScriptableObject

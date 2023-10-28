@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Search;
+
 using UnityEngine;
 
 public class GhostBuster : MonoBehaviour
@@ -37,9 +35,7 @@ public class GhostBuster : MonoBehaviour
         {
             case State.Patrol:
                 Patrol();
-                
-                
-                
+
                 Vector3 toPlayer = player.transform.position - transform.position;
                 Vector3 forwardDirection = forwardIndicator.position - transform.position;
 

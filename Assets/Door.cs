@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -9,28 +6,55 @@ public class Door : MonoBehaviour
     [SerializeField] private GameObject inside;
     [SerializeField] private GameObject outside;
     [SerializeField] private PlayerController player;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Texture2D cursor;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip[] doorSounds;
+    private bool isPlayerInRange = false;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    public void OnTriggerStay2D(Collider2D other)
+    
+
+    private void Update()
     {
-        if (other.CompareTag("Player") && player.HasKey)
+        if (isPlayerInRange)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("Door Opened");
-                inside.SetActive(true);
-                outside.SetActive(false);
+                if (player.HasKey)
+                {
+                    Debug.Log("Door Opened");
+                    audioSource.PlayOneShot(doorSounds[0]);
+                    inside.SetActive(true);
+                    outside.SetActive(false);
+                    player.HasKey = false;
+                    Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                }
+                else
+                {
+                    Debug.Log("You don't have the key");
+                    audioSource.PlayOneShot(doorSounds[1]);
+                }
             }
         }
     }
+
+    public void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            isPlayerInRange = false;
+        }
+    }
+    
+    public void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Cursor.SetCursor(cursor, Vector2.zero, CursorMode.Auto);
+            isPlayerInRange = true;
+        }
+    }
+    
+    
 }
