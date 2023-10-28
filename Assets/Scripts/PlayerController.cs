@@ -1,8 +1,8 @@
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
     [CanBeNull] private AudioSource moveSound;
     private float verticalDelta = 0f;
     private int health = 7;
-    public bool hasKey = true;
+    private bool hasKey = false;
 
     private void Awake()
     {
@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         StartCoroutine(FloatUpAndDown());
+        
     }
 
     private void FixedUpdate()
@@ -62,6 +63,8 @@ public class PlayerController : MonoBehaviour
         {
             moveSound.Pause();
         }
+        
+        Debug.Log("Player has key: " + hasKey);
     }
 
     public void TakeDamage(int points)
