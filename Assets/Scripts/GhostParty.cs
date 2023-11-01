@@ -4,24 +4,32 @@ using UnityEngine;
 
 public class GhostParty : MonoBehaviour
 {
-    public GameObject ghostCollider; 
-    // Start is called before the first frame update
+    public GameObject ghostCollider;
+
+
     void Start()
     {
-        
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        private void OnTriggerEnter2D(Collider 2D other){
-            //if player collides into door, take to other map 
-            if (other.CompareTag("Player"))
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+        if (other.CompareTag("Player"))
         {
-     
-            player.HasKey = true;
+ 
+            PlayerController player = other.GetComponent<PlayerController>();
+            if (player != null)
+            {
+                player.HasKey = true;
+            }
+
+            // Destroy the object with this script attached.
             Destroy(gameObject);
         }
-        
     }
 }
