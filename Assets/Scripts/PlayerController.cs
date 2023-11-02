@@ -12,6 +12,11 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public bool IsBoostActive => isBoostActive;
+    public bool CanMove
+    {
+        get => canMove;
+        set => canMove = value;
+    }
 
     public bool HasKey
     {
@@ -31,9 +36,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip sizzleSound;
     private Rigidbody2D rb;
     private Sprite currSprite;
-
+    
+    private int playerLayer;
+    private int ghostBusterLayer;
     private float verticalDelta = 0f;
     private bool hasKey = false;
+    private bool canMove = true;
 
     [Header("Invisibility Settings")]
     [SerializeField] private float invisibilityDuration = 3f;
@@ -41,9 +49,8 @@ public class PlayerController : MonoBehaviour
     
     [Header("Boost Meter")]
     [SerializeField] private float boostMeterMax = 100f;
-    [SerializeField] private float boostMeterIncreaseRate = 1f;
-    [SerializeField] private float boostMeterDecreaseRate = 10f;
-    [SerializeField] private float boostMeter = 100f;
+    [SerializeField] private float boostMeterIncreaseRate = 10f;
+    [SerializeField] private float boostMeter = 0f;
     [SerializeField] private bool isBoostActive = false;
     
     [Header("Boost Meter UI")]
@@ -56,12 +63,14 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
+        playerLayer = LayerMask.NameToLayer("Player");
+        ghostBusterLayer = LayerMask.NameToLayer("GhostBuster");
+        Physics2D.IgnoreLayerCollision(playerLayer, ghostBusterLayer, true);
     }
 
     private void Start()
     {
         StartCoroutine(FloatUpAndDown());
-        
     }
 
     private void FixedUpdate()
@@ -75,26 +84,21 @@ public class PlayerController : MonoBehaviour
         Vector2 moveDirection = new Vector2(horizontalMovement, verticalMovement).normalized;
         Vector2 newVelocity = new Vector2(moveDirection.x * moveSpeed, moveDirection.y * moveSpeed + verticalDelta);
 
-        rb.velocity = newVelocity;
-
-        if (moveDirection.magnitude > 0 && !audioSource.isPlaying)
+        if (canMove)
         {
-            audioSource.UnPause();
+            rb.velocity = newVelocity;
         }
-        else
-        {
-            audioSource.Pause();
-        }
+    }
 
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.Space) && boostMeter >= 97f && !isBoostActive)
         {
             Debug.Log("BooostActivated");
             ActivateInvisibility();
         }
-        
-        Debug.Log("Player has key: " + hasKey);
     }
-    
+
     private void HandleBoostMeter()
     {
         if (!isBoostActive)
@@ -109,6 +113,7 @@ public class PlayerController : MonoBehaviour
     public void ActivateInvisibility()
     {
         isBoostActive = true;
+        Physics2D.IgnoreLayerCollision(playerLayer, ghostBusterLayer, true);
         StartCoroutine(BecomeInvisible());
         boostMeter = 0f;
     }
@@ -131,6 +136,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         SetSpriteAlpha(1f); 
+        Physics2D.IgnoreLayerCollision(playerLayer, ghostBusterLayer, false);
         isBoostActive = false;
     }
     
@@ -155,7 +161,6 @@ public class PlayerController : MonoBehaviour
             candle.pointLightInnerRadius-= damage;
             FindObjectOfType<Candle>().UpdateHealthbar();
             audioSource.PlayOneShot(sizzleSound);
-            Debug.Log("Sprite updated, candle level: " + candleLevel);
         }
         else
         {

@@ -44,7 +44,7 @@ public class Candle : MonoBehaviour
 
     public void UpdateHealthbar()
     {
-        currSprite.sprite = sprites[(int)candle.pointLightInnerRadius];
+        currSprite.sprite = sprites[(int)candle.pointLightInnerRadius + 1];
     }
 
 }

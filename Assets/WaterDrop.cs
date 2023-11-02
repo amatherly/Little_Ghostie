@@ -20,9 +20,9 @@ public class WaterDrop : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Candle"))
         {
-            other.GetComponent<PlayerController>().TakeDamage(1);
+            FindObjectOfType<PlayerController>().TakeDamage(1);
             Destroy(gameObject);
         }
     }

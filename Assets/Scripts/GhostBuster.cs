@@ -60,7 +60,7 @@ public class GhostBuster : MonoBehaviour
                 break;
 
             case State.Follow:
-                Debug.Log("Following player");
+
                 moveSpeed = followSpeed;
                 FollowPlayer();
                 if (Vector3.Distance(transform.position, player.transform.position) >= detectionRange)
@@ -89,7 +89,7 @@ public class GhostBuster : MonoBehaviour
         MoveTowards(player.transform.position);
         if (timeSinceLastShot >= shootingInterval)
         {
-            Debug.Log("Shooting player");
+
             Shoot();
             timeSinceLastShot = 0f;
         }
@@ -113,7 +113,6 @@ public class GhostBuster : MonoBehaviour
     
     private void Shoot()
     {
-        Debug.Log("pew pew");
         GameObject waterDrop = Instantiate(waterDropPrefab, gun.position, gun.rotation);
         ParticleSystem waterTrail = waterDrop.GetComponentInChildren<ParticleSystem>();
 

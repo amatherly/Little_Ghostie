@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Pickup : MonoBehaviour
@@ -10,15 +11,13 @@ public class Pickup : MonoBehaviour
     private PlayerController player;
     public AudioSource audioSource;
     
-
-
+    
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         playerTransform = player.transform;
     }
-
-
+    
     private void Update()
     {
         // Check if the player is in range
@@ -35,9 +34,15 @@ public class Pickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             FindObjectOfType<GameManager>().DisplayPrompt();
-            AudioSource.PlayClipAtPoint(pickupSound, this.gameObject.transform.position);
+            audioSource.PlayOneShot(pickupSound);
             player.HasKey = true;
-            Destroy(gameObject);
+            StartCoroutine(DelayedPause());
         }
+    }
+    
+    private IEnumerator DelayedPause()
+    {
+        yield return new WaitForSecondsRealtime(1f); 
+        Destroy(gameObject);
     }
 }

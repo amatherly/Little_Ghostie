@@ -61,6 +61,4 @@ public class Door : MonoBehaviour
             isPlayerInRange = true;
         }
     }
-    
-    
 }
