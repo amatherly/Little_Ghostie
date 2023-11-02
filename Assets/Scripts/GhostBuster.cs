@@ -53,7 +53,7 @@ public class GhostBuster : MonoBehaviour
                 Debug.DrawRay(transform.position, leftRayDirection, Color.red);
                 Debug.DrawRay(transform.position, rightRayDirection, Color.red);
 
-                if (Vector3.Distance(transform.position, player.transform.position) < detectionRange && Mathf.Abs(angleToPlayer) < viewConeAngle)
+                if (Vector3.Distance(transform.position, player.transform.position) < detectionRange && Mathf.Abs(angleToPlayer) < viewConeAngle && player.IsBoostActive == false)
                 {
                     currentState = State.Follow;
                 }

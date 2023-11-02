@@ -7,7 +7,7 @@ public class MainMenu : MonoBehaviour
 {
     
     [SerializeField] private string loadingScreenSceneName = "LoadingScreen";
-
+    
     public void LoadLoadingScreenScene()
     {
         SceneManager.LoadScene(loadingScreenSceneName);
@@ -17,4 +17,6 @@ public class MainMenu : MonoBehaviour
     {
         Application.Quit();
     }
+    
+
 }

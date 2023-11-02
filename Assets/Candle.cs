@@ -26,7 +26,7 @@ public class Candle : MonoBehaviour
     {
         if (candle.pointLightInnerRadius <= 0 || candle.pointLightOuterRadius <= 0)
         {
-            GameOver();
+            FindObjectOfType<GameManager>().GameOver();
         }
     }
 
@@ -41,11 +41,6 @@ public class Candle : MonoBehaviour
         }
     }
     
-    public void GameOver()
-    {
-        FindObjectOfType<UI>().GameOver();
-        Time.timeScale = 0;
-    }
 
     public void UpdateHealthbar()
     {

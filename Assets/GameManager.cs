@@ -7,6 +7,10 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
+    [SerializeField] private AudioClip gameMusic;
+    [SerializeField] private AudioClip gameOverMusic;
+    [SerializeField] private AudioSource audioSource;   
+    
 
     private TextDisplay textDisplay;
     private string[][] prompts =
@@ -24,6 +28,27 @@ public class GameManager : MonoBehaviour
         StartCoroutine(FadeIn());
         textDisplay = FindObjectOfType<TextDisplay>();
         textDisplay.DisplayTexts(prompts[code]);
+        
+        audioSource.clip = gameMusic;
+        audioSource.volume = 0f; 
+        audioSource.Play();
+        StartCoroutine(FadeInMusic(2));
+    }
+    
+
+    private IEnumerator FadeInMusic(float duration)
+    {
+        float startVolume = 0f;
+        float endVolume = 0.5f;
+        float currentTime = 0f;
+
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(startVolume, endVolume, currentTime / duration);
+            yield return null;
+        }
+        audioSource.volume = endVolume; 
     }
 
     public void DisplayPrompt()
@@ -40,5 +65,13 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         fadeImage.CrossFadeAlpha(0, 2, false);
         yield return new WaitForSeconds(3);
+    }
+    
+    public void GameOver()
+    {
+        audioSource.clip = gameOverMusic;
+        // audioSource.PlayOneShot(gameOverMusic);
+        FindObjectOfType<UI>().GameOver();
+        Time.timeScale = 0;
     }
 }

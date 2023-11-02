@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -6,9 +7,12 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool IsBoostActive => isBoostActive;
+
     public bool HasKey
     {
         get => hasKey;
@@ -31,9 +35,25 @@ public class PlayerController : MonoBehaviour
     private float verticalDelta = 0f;
     private bool hasKey = false;
 
+    [Header("Invisibility Settings")]
+    [SerializeField] private float invisibilityDuration = 3f;
+    [SerializeField] private float fadeDuration = .3f;
+    
+    [Header("Boost Meter")]
+    [SerializeField] private float boostMeterMax = 100f;
+    [SerializeField] private float boostMeterIncreaseRate = 1f;
+    [SerializeField] private float boostMeterDecreaseRate = 10f;
+    [SerializeField] private float boostMeter = 100f;
+    [SerializeField] private bool isBoostActive = false;
+    
+    [Header("Boost Meter UI")]
+    [SerializeField] private Image boostMeterImage;
+
+    private SpriteRenderer spriteRenderer;
+
     private void Awake()
     {
-        currSprite = GetComponent<Sprite>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
     }
@@ -46,7 +66,9 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-  
+        HandleBoostMeter();
+        UpdateBoostMeterUI();
+        
         float horizontalMovement = Input.GetAxisRaw("Horizontal");
         float verticalMovement = Input.GetAxisRaw("Vertical");
 
@@ -63,8 +85,60 @@ public class PlayerController : MonoBehaviour
         {
             audioSource.Pause();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space) && boostMeter >= 97f && !isBoostActive)
+        {
+            Debug.Log("BooostActivated");
+            ActivateInvisibility();
+        }
         
         Debug.Log("Player has key: " + hasKey);
+    }
+    
+    private void HandleBoostMeter()
+    {
+        if (!isBoostActive)
+        {
+            if (boostMeter < boostMeterMax)
+            {
+                boostMeter += boostMeterIncreaseRate * Time.deltaTime;
+            }
+        }
+    }
+    
+    public void ActivateInvisibility()
+    {
+        isBoostActive = true;
+        StartCoroutine(BecomeInvisible());
+        boostMeter = 0f;
+    }
+    
+    private IEnumerator BecomeInvisible()
+    {
+        for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+        {
+            float normalizedTime = t / fadeDuration;
+            SetSpriteAlpha(Mathf.Lerp(1f, 0.1f, normalizedTime)); 
+            yield return null;
+        }
+        SetSpriteAlpha(0.1f); 
+        
+        yield return new WaitForSeconds(invisibilityDuration);
+        for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+        {
+            float normalizedTime = t / fadeDuration;
+            SetSpriteAlpha(Mathf.Lerp(0.1f, 1f, normalizedTime));
+            yield return null;
+        }
+        SetSpriteAlpha(1f); 
+        isBoostActive = false;
+    }
+    
+    private void SetSpriteAlpha(float alpha)
+    {
+        Color color = spriteRenderer.color;
+        color.a = alpha;
+        spriteRenderer.color = color;
     }
 
     public void TakeDamage(int points)
@@ -85,17 +159,11 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            GameOver();
+            FindObjectOfType<GameManager>().GameOver();
             Debug.Log("Player died");
         }
     }
     
-        
-    public void GameOver()
-    {
-        FindObjectOfType<UI>().GameOver();
-        Time.timeScale = 0;
-    }
 
     private IEnumerator FloatUpAndDown()
     {
@@ -106,5 +174,8 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    
+    private void UpdateBoostMeterUI()
+    {
+        boostMeterImage.fillAmount = boostMeter / boostMeterMax;
+    }
 }
