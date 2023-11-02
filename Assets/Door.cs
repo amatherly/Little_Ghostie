@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -9,10 +10,14 @@ public class Door : MonoBehaviour
     [SerializeField] private Texture2D cursor;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip[] doorSounds;
+    private GameManager gameManager;
     private bool isPlayerInRange = false;
 
 
-    
+    public void Start()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
 
     private void Update()
     {
@@ -28,6 +33,7 @@ public class Door : MonoBehaviour
                     outside.SetActive(false);
                     player.HasKey = false;
                     Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+                    gameManager.DisplayPrompt();
                 }
                 else
                 {

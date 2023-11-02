@@ -1,15 +1,22 @@
 
+using System.Collections;
 using UnityEngine;
 
 public class GhostBuster : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private float followSpeed = 2.5f;
+    [SerializeField] private float patrolSpeed = 1f;
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float shootForce;
     [SerializeField] private Transform gun;
     [SerializeField] private Transform forwardIndicator;
     [SerializeField] private Transform[] patrolPoints;
     [SerializeField] private GameObject  waterDropPrefab;
+    [SerializeField] private float  viewConeAngle = 45f;
+    [SerializeField] private float  soundMultiplier = 5f;
+    [SerializeField] private float  soundInterval = 0.1f;
+    
     
     private PlayerController player;
     private AudioSource shootingSound;
@@ -35,19 +42,18 @@ public class GhostBuster : MonoBehaviour
         {
             case State.Patrol:
                 Patrol();
-
+                moveSpeed = patrolSpeed;
                 Vector3 toPlayer = player.transform.position - transform.position;
                 Vector3 forwardDirection = forwardIndicator.position - transform.position;
 
                 float angleToPlayer = Vector3.Angle(forwardDirection, toPlayer);
-                float viewConeAngle = 15f; // This should match the angle used for detection
 
                 Vector3 leftRayDirection = Quaternion.Euler(0, 0, -viewConeAngle) * forwardDirection;
                 Vector3 rightRayDirection = Quaternion.Euler(0, 0, viewConeAngle) * forwardDirection;
                 Debug.DrawRay(transform.position, leftRayDirection, Color.red);
                 Debug.DrawRay(transform.position, rightRayDirection, Color.red);
 
-                if (Vector3.Distance(transform.position, player.transform.position) < detectionRange && Mathf.Abs(angleToPlayer) < 15f)
+                if (Vector3.Distance(transform.position, player.transform.position) < detectionRange && Mathf.Abs(angleToPlayer) < viewConeAngle)
                 {
                     currentState = State.Follow;
                 }
@@ -55,6 +61,7 @@ public class GhostBuster : MonoBehaviour
 
             case State.Follow:
                 Debug.Log("Following player");
+                moveSpeed = followSpeed;
                 FollowPlayer();
                 if (Vector3.Distance(transform.position, player.transform.position) >= detectionRange)
                 {
@@ -106,10 +113,32 @@ public class GhostBuster : MonoBehaviour
     
     private void Shoot()
     {
-        shootingSound.PlayOneShot(shootingSound.clip);
         Debug.Log("pew pew");
         GameObject waterDrop = Instantiate(waterDropPrefab, gun.position, gun.rotation);
+        ParticleSystem waterTrail = waterDrop.GetComponentInChildren<ParticleSystem>();
+
+        if(waterTrail != null)
+        {
+            waterTrail.Play();
+        }
+
         Vector2 directionToPlayer = (player.transform.position - gun.position).normalized;
         waterDrop.GetComponent<Rigidbody2D>().AddForce(directionToPlayer * shootForce, ForceMode2D.Impulse);
+        PlayShootingSounds();
+    }
+    
+    private IEnumerator PlayShootingSoundsCoroutine()
+    {
+        for (int i = 0; i < soundMultiplier; i++)
+        {
+            shootingSound.pitch = Random.Range(0.5f, 1.5f);
+            shootingSound.PlayOneShot(shootingSound.clip);
+            yield return new WaitForSeconds(soundInterval); 
+        }
+    }
+
+    private void PlayShootingSounds()
+    {
+        StartCoroutine(PlayShootingSoundsCoroutine());
     }
 }
