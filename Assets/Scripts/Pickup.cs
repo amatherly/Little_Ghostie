@@ -34,6 +34,7 @@ public class Pickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            FindObjectOfType<GameManager>().DisplayPrompt();
             AudioSource.PlayClipAtPoint(pickupSound, this.gameObject.transform.position);
             player.HasKey = true;
             Destroy(gameObject);

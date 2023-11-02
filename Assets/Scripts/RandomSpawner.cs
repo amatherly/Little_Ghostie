@@ -11,10 +11,7 @@ public class RandomSpawner : MonoBehaviour
 
     void Start()
     {
-        
-           
-            Instantiate(keyPrefab, spawnLocations[Random.Range(1, 4)].position, Quaternion.identity); 
-        
+        Instantiate(keyPrefab, spawnLocations[Random.Range(0, spawnLocations.Length)].position, Quaternion.identity);
     }
 
    
