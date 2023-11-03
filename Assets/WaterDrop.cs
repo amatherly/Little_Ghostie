@@ -7,8 +7,7 @@ public class WaterDrop : MonoBehaviour
 {
 
     private float lifeTime = 0.7f;
-
-
+    
     public void Update()
     {
         lifeTime -= Time.deltaTime;
@@ -20,13 +19,11 @@ public class WaterDrop : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Candle"))
+        if (other.CompareTag("Player"))
         {
             FindObjectOfType<PlayerController>().TakeDamage(1);
             Destroy(gameObject);
         }
     }
-    
 
-    
 }

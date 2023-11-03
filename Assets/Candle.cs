@@ -8,9 +8,14 @@ using UnityEngine.UI;
 
 public class Candle : MonoBehaviour
 {
-    
+    public float ActiveDuration
+    {
+        get => activeDuration;
+        set => activeDuration = value;
+    }
+
     [SerializeField] private Image currSprite;
-    [SerializeField] private float activeDuration = 30f;
+    [SerializeField] private float activeDuration = 2f;
     [SerializeField] private List<Sprite> sprites;
     [SerializeField] private Light2D candle;
     [SerializeField] private float damage = 1f;

@@ -11,6 +11,12 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    public float VerticalDelta
+    {
+        get => verticalDelta;
+        set => verticalDelta = value;
+    }
+
     public bool IsBoostActive => isBoostActive;
     public bool CanMove
     {
@@ -65,7 +71,7 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         playerLayer = LayerMask.NameToLayer("Player");
         ghostBusterLayer = LayerMask.NameToLayer("GhostBuster");
-        Physics2D.IgnoreLayerCollision(playerLayer, ghostBusterLayer, true);
+        Physics2D.IgnoreLayerCollision(playerLayer, ghostBusterLayer, false);
     }
 
     private void Start()

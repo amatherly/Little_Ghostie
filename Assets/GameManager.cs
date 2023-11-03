@@ -10,8 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip gameOverMusic;
     [SerializeField] private AudioClip partyMusic;
     [SerializeField] private AudioSource audioSource;
-
-
+    
     private TextDisplay textDisplay;
 
     private string[][] prompts =
@@ -84,6 +83,8 @@ public class GameManager : MonoBehaviour
 
     public void Party()
     {
+        FindObjectOfType<PlayerController>().VerticalDelta = 0;
+        FindObjectOfType<Candle>().ActiveDuration = 300;
         audioSource.Stop();
         audioSource.clip = partyMusic;
         audioSource.Play();
